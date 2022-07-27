@@ -4,7 +4,7 @@ const User = require("../models/kio");
 
 const { subword } = require("./_scripts");
 
-router.post("/kio", async (req, res) => {
+router.post("/kio/user", async (req, res) => {
   let resp;
   var { phoneNumber, serviceCode, text, sessionId, networkCode } = req.body;
 
@@ -30,10 +30,16 @@ router.post("/kio", async (req, res) => {
     let passwordExists = await User.exists({ password: passwordText });
 
     if (passwordExists) resp = `END your balance account is ...`;
-    if (passwordExists == null)
-      resp = `END this account does not exist or incorrect password`;
+    if (passwordExists == null) resp = `END this account does not exist or incorrect password`;
   } else if (text == "2") {
-    resp = `END welcome to services`;
+    resp = `CON welcome to services make your choice
+    1- WAARI
+    2- World remit
+    3- Canal+
+    3- Buy vochers
+    5- Moto assurance`;
+  }else if(text == "2*1"){
+    resp = `CON type your wari account number`
   }
 
   res.send(resp);
