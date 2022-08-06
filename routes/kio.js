@@ -26,15 +26,15 @@ class WariRoute {
 
     this.ussdCases = new Map();
     this.ussdCases.set("", this.sendMenu1());
+    this.ussdCases.set("0", this.sendMenu1());
     this.ussdCases.set("1", this.PasswordForSolde(this.textPassword));
-    this.ussdCases.set("2", this.sendServices());
+    this.ussdCases.set("2", this.sendMenu2());
     this.ussdCases.set("3", this.newAccount());
 
     this.ussdCases.set("1*0", this.sendMenu1());
     this.ussdCases.set("1*" + this.password, this.getSolde());
 
-    this.ussdCases.set("2", this.sendMenu2());
-    this.ussdCases.set("2*0", this.sendMenu1());
+    this.ussdCases.set("2*0", this.sendMenu2());
     this.ussdCases.set("2*1", this.wari());
     this.ussdCases.set("2*2", this.worldRemit());
     this.ussdCases.set("2*3", this.canalPlus());
