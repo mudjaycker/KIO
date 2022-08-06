@@ -11,11 +11,6 @@ const kioUserSchema = new mongoose.Schema({
     required: false,
   },
   
-  role: {
-    type: String,
-    required: true,
-  },
-
   password: {
     type: String,
     required: true,
