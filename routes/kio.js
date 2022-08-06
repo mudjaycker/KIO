@@ -13,6 +13,8 @@ const {
 
 class WariRoute {
   constructor() {
+    this.thirdPartiesUrl = "http://127.0.0.1:5000/api";
+
     this.request;
     this.results;
     this.response;
@@ -71,5 +73,14 @@ class WariRoute {
     5- Moto assurance`;
   }
 
-  wari() {}
+  async wari() {
+    let thirdPartiesUserExists = await checkIfUserExist(
+      this.thirdPartiesUrl + "/user/" + this.phoneNumber
+    );
+    if (thirdPartiesUserExists[0]) {
+      this.response = `CON 1 - send money`;
+    } else {
+      this.response = `This wari user does not exist`;
+    }
+  }
 }
