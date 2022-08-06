@@ -50,12 +50,24 @@ class WariRoute {
   }
 
   async PasswordForSolde(textPassword) {
+    let testPassword = subword(textPassword, 2);
     let passwordExists = await User.exists({
-      password: subword(textPassword, 2),
+      password: testPassword,
     });
     if (passwordExists) {
-      this.password = textPassword;
+      this.password = testPassword;
       resp = `END your balance account is ...`;
     } else resp = `END this account does not exist or incorrect password`;
   }
+
+  sendMenu2() {
+    this.response = `CON welcome to services make your choice
+    1- WAARI
+    2- World remit
+    3- Canal+
+    3- Buy vochers
+    5- Moto assurance`;
+  }
+
+  wari() {}
 }
