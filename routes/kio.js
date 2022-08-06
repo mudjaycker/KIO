@@ -24,6 +24,8 @@ class WariRoute {
     this.sessionId;
     this.networkCode;
 
+    this.serve();
+
     this.ussdCases = new Map();
     this.ussdCases.set("", this.sendMenu1());
     this.ussdCases.set("0", this.sendMenu1());
