@@ -2,47 +2,47 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/kio");
 
-const { subword } = require("./_scripts");
+const thirdPartsUrl = "http://127.0.0.1:5000/api";
 
-router.post("/kio/user", async (req, res) => {
-  let resp;
-  var { phoneNumber, serviceCode, text, sessionId, networkCode } = req.body;
+const {
+  subword,
+  checkIfUserExist,
+  getKioUser,
+  excludeChar,
+} = require("./_scripts");
 
-  if (text == "") {
-    resp = `CON Login to your account
+class WariRoute {
+  constructor() {
+    this.request;
+    this.results;
+    this.response;
+
+    this.phoneNumber;
+    this.serviceCode;
+    this.sessionId;
+    this.networkCode;
+    this.password;
+
+    this.ussdCases = new Map();
+    this.ussdCases.set("", this.sendMenu1());
+    this.ussdCases.set("1", this.PasswordForSolde());
+    this.ussdCases.set("2", this.sendServices());
+    this.ussdCases.set("3", this.newAccount());
+
+    this.ussdCases.set("1*0", this.sendMenu1());
+    this.ussdCases.set("1*" + this.password, this.getSolde());
+
+    this.ussdCases.set("2", this.sendMenu2());
+    this.ussdCases.set("2*0", this.sendMenu1());
+    this.ussdCases.set("2*1", this.wari());
+    this.ussdCases.set("2*2", this.worldRemit());
+    this.ussdCases.set("2*3", this.canalPlus());
+    this.ussdCases.set("2*4", this.vochers());
+    this.ussdCases.set("2*5", this.motoAutoAssurance());
+  }
+
+  sendMenu1() {
+    this.response = `CON Login to your account
     tape your password`;
   }
-  var userExists = await User.exists({
-    phoneNumber: phoneNumber,
-    password: text,
-  });
-
-  if (text == "") {
-    resp = `CON Welcome in your KIO mobile money what do you want to do
-    1- Get my balance account
-    2- Services
-    3- create an account if not exists`;
-    
-  } else if (text == "1") {
-    resp = `CON enter your password please`;
-  } else if (text[0] == "1" && text[1] == "*") {
-    const passwordText = subword(text, 2);
-    let passwordExists = await User.exists({ password: passwordText });
-
-    if (passwordExists) resp = `END your balance account is ...`;
-    if (passwordExists == null) resp = `END this account does not exist or incorrect password`;
-  } else if (text == "2") {
-    resp = `CON welcome to services make your choice
-    1- WAARI
-    2- World remit
-    3- Canal+
-    3- Buy vochers
-    5- Moto assurance`;
-  }else if(text == "2*1"){
-    resp = `CON type your wari account number`
-  }
-
-  res.send(resp);
-});
-
-module.exports = router;
+}
