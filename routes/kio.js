@@ -16,16 +16,17 @@ class WariRoute {
     this.request;
     this.results;
     this.response;
+    this.password;
+    this.textPassword;
 
     this.phoneNumber;
     this.serviceCode;
     this.sessionId;
     this.networkCode;
-    this.password;
 
     this.ussdCases = new Map();
     this.ussdCases.set("", this.sendMenu1());
-    this.ussdCases.set("1", this.PasswordForSolde());
+    this.ussdCases.set("1", this.PasswordForSolde(this.textPassword));
     this.ussdCases.set("2", this.sendServices());
     this.ussdCases.set("3", this.newAccount());
 
@@ -42,7 +43,19 @@ class WariRoute {
   }
 
   sendMenu1() {
-    this.response = `CON Login to your account
-    tape your password`;
+    this.response = `CON Welcome in your KIO mobile money what do you want to do
+    1- Get my balance account
+    2- Services
+    3- create an account if not exists`;
+  }
+
+  async PasswordForSolde(textPassword) {
+    let passwordExists = await User.exists({
+      password: subword(textPassword, 2),
+    });
+    if (passwordExists) {
+      this.password = textPassword;
+      resp = `END your balance account is ...`;
+    } else resp = `END this account does not exist or incorrect password`;
   }
 }
