@@ -45,10 +45,10 @@ class KioRoute {
       if (this.text.includes(user.password) && user.phoneNumber == this.phoneNumber) {
         this.password = user.password;
         p = this.password
-        console.log(user);
+
         userExists = true;
         // proctected action need auth to be done
-        this.ussdCases.set(this.password + "*1", () => this.sendMenu1());
+        this.ussdCases.set(this.password + "*1", () => this.balanceSolde());
         this.ussdCases.set(this.password + "*1*0", () => this.sendMenu1());
         this.ussdCases.set(this.password + "*2", () => this.sendMenu2());
         this.ussdCases.set(this.password + "*1*0", () => this.sendMenu1());
@@ -62,7 +62,12 @@ class KioRoute {
     });
     return [userExists, p];
   }
-  async askForPassword() {
+  async balanceSolde(){
+      const user = await User.findOne({ phoneNumber: this.phoneNumber, password: this.password})
+      this.response = `Your balance is ${user.balance} fbu`
+  }
+  
+  askForPassword() {
     this.response = `CON first enter your password`;
   }
 
