@@ -1,6 +1,6 @@
 const axios = require("axios");
 module.exports = {
-  subword: function (text, start, end = text.length - 1) {
+  subword: function (text, start, end) {
     let text_res = "";
     for (let i = start; i <= end; i++) {
       text_res += text[i];
