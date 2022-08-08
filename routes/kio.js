@@ -32,8 +32,7 @@ class KioRoute {
   }
 
   sendMenu1() {
-    this.response = `CON Welcome in your KIO mobile money what do you want to do
-    1- Get my balance account
+    this.response = `CON 1- Get my balance account
     2- Services
     3- create an account if not exists`;
   }
@@ -77,13 +76,38 @@ class KioRoute {
   }
 
   async wari() {
-    let thirdPartiesUserExists = await checkIfUserExist(
-      this.thirdPartiesUrl + "/user/" + this.phoneNumber
+    let thirdPartUserExists = await checkIfUserExist(
+      this.thirdPartsUrl + "/user/" + this.phoneNumber
     );
-    if (thirdPartiesUserExists[0]) {
+    console.log("in wari");
+    if (thirdPartUserExists[0]) {
       this.response = `CON 1 - send money`;
     } else {
-      this.response = `This wari user does not exist`;
+      this.response = `This wari users does not exist`;
     }
   }
 }
+
+router.post("/kio/wari", async (req, res) => {
+  let route = new KioRoute();
+  let { phoneNumber, serviceCode, text, sessionId, networkCode } = req.body;
+  route.phoneNumber = phoneNumber;
+  route.serviceCode = serviceCode;
+  route.sessionId = sessionId;
+  route.networkCode = networkCode;
+
+  route.text = text;
+  if (text == "") {
+  await route.ussdCases.get("")();
+  }
+  if ((await route.whenAuthentified()) != [] && route.text.length >= 4) {
+    if (route.text == route.password) {
+      route.sendMenu1()
+    } else {
+     await route.ussdCases.get(route.text)();
+    }
+  }
+ 
+  res.send(route.response);
+});
+module.exports = router;
