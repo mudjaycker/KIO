@@ -11,39 +11,24 @@ const {
   excludeChar,
 } = require("./_scripts");
 
-class WariRoute {
+class KioRoute {
   constructor() {
-    this.thirdPartiesUrl = "http://127.0.0.1:5000/api";
+    this.thirdPartsUrl = "http://127.0.0.1:5000/api";
 
     this.request;
     this.results;
     this.response;
     this.password;
-    this.textPassword;
+    this.text;
 
     this.phoneNumber;
     this.serviceCode;
     this.sessionId;
     this.networkCode;
 
-    this.serve();
-
+    // map to manage ussd cases
     this.ussdCases = new Map();
-    this.ussdCases.set("", this.sendMenu1());
-    this.ussdCases.set("0", this.sendMenu1());
-    this.ussdCases.set("1", this.PasswordForSolde(this.textPassword));
-    this.ussdCases.set("2", this.sendMenu2());
-    this.ussdCases.set("3", this.newAccount());
-
-    this.ussdCases.set("1*0", this.sendMenu1());
-    this.ussdCases.set("1*" + this.password, this.getSolde());
-
-    this.ussdCases.set("2*0", this.sendMenu2());
-    this.ussdCases.set("2*1", this.wari());
-    this.ussdCases.set("2*2", this.worldRemit());
-    this.ussdCases.set("2*3", this.canalPlus());
-    this.ussdCases.set("2*4", this.vochers());
-    this.ussdCases.set("2*5", this.motoAutoAssurance());
+    this.ussdCases.set("", () => this.askForPassword());
   }
 
   sendMenu1() {
@@ -53,15 +38,33 @@ class WariRoute {
     3- create an account if not exists`;
   }
 
-  async PasswordForSolde(textPassword) {
-    let testPassword = subword(textPassword, 2);
-    let passwordExists = await User.exists({
-      password: testPassword,
+  async whenAuthentified() {
+    const users = await User.find();
+    let userExists;
+    let p;
+    users.forEach((user) => {
+      if (this.text.includes(user.password) && user.phoneNumber == this.phoneNumber) {
+        this.password = user.password;
+        p = this.password
+        console.log(user);
+        userExists = true;
+        // proctected action need auth to be done
+        this.ussdCases.set(this.password + "*1", () => this.sendMenu1());
+        this.ussdCases.set(this.password + "*1*0", () => this.sendMenu1());
+        this.ussdCases.set(this.password + "*2", () => this.sendMenu2());
+        this.ussdCases.set(this.password + "*1*0", () => this.sendMenu1());
+        this.ussdCases.set(this.password + "*1*" + this.password, () => this.sendMenu1());
+        this.ussdCases.set(this.password + "*2*0", () => this.sendMenu2());
+        this.ussdCases.set(this.password + "*2*1",  () => this.wari());
+      } else {
+        userExists = false;
+        p = "unknown password";
+      }
     });
-    if (passwordExists) {
-      this.password = testPassword;
-      resp = `END your balance account is ...`;
-    } else resp = `END this account does not exist or incorrect password`;
+    return [userExists, p];
+  }
+  async askForPassword() {
+    this.response = `CON first enter your password`;
   }
 
   sendMenu2() {
