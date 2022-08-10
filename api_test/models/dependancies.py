@@ -8,12 +8,14 @@ class User(db.Model):
     )
     user_id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.String(50))
+    phone_number = db.Column(db.String(50))
     password = db.Column(db.String(50))
 
     def to_json(self):
         return {
             "user_id": self.user_id,
             "user_name": self.user_name,
+            "phone_number": self.phone_number,
         }
     def save_to_db(self):
         db.session.add(self)

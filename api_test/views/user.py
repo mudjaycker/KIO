@@ -14,7 +14,7 @@ api = APIBlueprint(
 
 
 @api.post("/api_test/user")
-def create_api_test(body: UserBody):
+def create_user(body: UserBody):
     "Post a user"
     d = body.dict()
     user = User(**d)
@@ -22,13 +22,13 @@ def create_api_test(body: UserBody):
     return {"code": 0, "message": "ok", "datas": [d]}
 
 
-@api.get("/user/<int:user_id>")
+@api.get("/user/<int:phone_number>")
 def get_one_user(path: UserQuery):
-    """Get one user by his id"""
+    """Get one user by his number"""
 
-    user = User.query.filter_by(user_id=path.user_id).first()
+    user = User.query.filter_by(phone_number=path.phone_number).first()
     if user:
         return {"datas": dict(UserBodyDeserializer(**user.to_json()))}
     else:
-        return {"message": "no user with this user_id"}, 404
+        return {"message": "no user with this phone_number"}, 404
 

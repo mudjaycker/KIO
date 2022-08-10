@@ -4,7 +4,7 @@ from . import dependancies as d
 
 class Wari(d.db.Model):
     __tablename__ = "wari"
-    user = d.db.Column(d.db.Integer, d.db.ForeignKey("user.user_id"), nullable=False)
+    user = d.db.Column(d.db.String(50), d.db.ForeignKey("user.phone_number"), nullable=False)
     sending_id = d.db.Column(
         d.db.String(50), primary_key=True
     )

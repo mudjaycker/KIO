@@ -16,7 +16,7 @@ api = APIBlueprint(
 )
 
 
-@api.get("/list/<int:user>")
+@api.get("/list/<string:user>")
 def get_api_test(path: WariQuery):
     """Get all Trasanction for a user
     """
@@ -30,7 +30,7 @@ def get_api_test(path: WariQuery):
 
 @api.post("/create")
 def create_api_test(body: WariBody):
-    "Post a api_test"
+    "Post a new transaction of wari"
     wari = Wari(**body.dict())
     wari.save_to_db()
     print(Wari.query.all())

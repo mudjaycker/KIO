@@ -8,11 +8,11 @@ def random_sending_id():
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(21))
 
 class WariQuery(d.BaseModel):
-    user: int
+    user: str
 
 
 class WariBody(d.BaseModel):
-    user: int
+    user: str
     sending_id : str = random_sending_id()
     sending_date: Optional[d.datetime] = d.datetime.utcnow()
     transac_amount: float = 0.0
@@ -22,7 +22,7 @@ class WariBody(d.BaseModel):
 
 
 class WariBodyDeserializer(d.BaseModel):
-    user: int
+    user: str
     sending_id: d.StrictStr
     sending_date: d.datetime
     transac_amount: float 
