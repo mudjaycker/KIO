@@ -17,9 +17,6 @@ class KioUserService {
     this.userCreation.set("2", () => this.newUserPassword());
   }
 
-  async newUserCreatedResponse() {
-    this.response = `END New user saved succefully`;
-  }
   async whenAuthentified() {
     const users = await User.find();
     let userExists;
