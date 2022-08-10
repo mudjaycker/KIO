@@ -23,11 +23,14 @@ class KioObject {
     this.ussdCases.set("", () => this.askForPassword());
   }
 
+  askForPassword() {
+    this.response = `CON enter your account passsword please`
+  }
 
   sendMenu1() {
     this.response = `CON 1- Get my balance account
     2- Services
-    3- user services`
+    3- user services`;
   }
 
   sendMenu2() {
@@ -50,12 +53,14 @@ class KioObject {
         this.password = user.password;
 
         userExists = true;
+        // console.log(user);
         // proctected action need auth to be done
         this.ussdCases.set(this.password + "*1", () => this.balanceSolde());
         this.ussdCases.set(this.password + "*2", () => this.sendMenu2());
         this.ussdCases.set(this.password + "*1*0", () => this.sendMenu1());
-        this.ussdCases.set(this.password + "*1*0", () => this.sendMenu1());
-        this.ussdCases.set(this.password + "*1*" + this.password, () => this.sendMenu1());
+        this.ussdCases.set(this.password + "*1*" + this.password, () =>
+          this.sendMenu1()
+        );
         this.ussdCases.set(this.password + "*2*0", () => this.sendMenu2());
         this.ussdCases.set(this.password + "*2*1", () => this.wari());
       } else {
@@ -73,14 +78,33 @@ class KioObject {
   }
 
   async wari() {
-    let thirdPartUserExists = await checkIfUserExist( thirdPartsUrl + "/user/" + this.phoneNumber );
+    let thirdPartUserExists = await checkIfUserExist(
+      thirdPartsUrl + "/user/" + this.phoneNumber
+    );
     if (thirdPartUserExists[0]) {
-      console.log(thirdPartUserExists[1].data.datas.user_name)
       this.response = `CON 1 - send money`;
     } else {
       this.response = `This wari users does not exist`;
     }
   }
+
+  async run(res) {
+    if (this.text == "") {
+      await this.ussdCases.get("")();
+    } else if (this.text != "") {
+      if (await this.whenAuthentified()) {
+        if (this.text == this.password) {
+          this.sendMenu1();
+        } else {
+          await this.ussdCases.get(this.text)();
+        }
+      } else if (this.text == "3") {
+        res.redirect(200, "kio/user-services");
+      } else {
+        this.response = "END bad code";
+      }
+    }
+  }
 }
 
-module.exports = KioObject
+module.exports = KioObject;
