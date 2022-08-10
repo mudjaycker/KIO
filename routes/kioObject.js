@@ -27,7 +27,7 @@ class KioObject {
   sendMenu1() {
     this.response = `CON 1- Get my balance account
     2- Services
-    3- create an account if not exists`;
+    3- user services`
   }
 
   sendMenu2() {
@@ -75,6 +75,7 @@ class KioObject {
   async wari() {
     let thirdPartUserExists = await checkIfUserExist( thirdPartsUrl + "/user/" + this.phoneNumber );
     if (thirdPartUserExists[0]) {
+      console.log(thirdPartUserExists[1].data.datas.user_name)
       this.response = `CON 1 - send money`;
     } else {
       this.response = `This wari users does not exist`;
