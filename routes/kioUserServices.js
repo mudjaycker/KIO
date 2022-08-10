@@ -17,8 +17,8 @@ class KioUserService {
     this.userCreation.set("2", () => this.newUserPassword());
   }
 
-  async newUserCreatedResponse(){
-    this.response = `END New user saved succefully`
+  async newUserCreatedResponse() {
+    this.response = `END New user saved succefully`;
   }
   async whenAuthentified() {
     const users = await User.find();
@@ -53,8 +53,14 @@ class KioUserService {
   }
 
   async save(userOBJ) {
-    const user = User(userOBJ);
-    await user.save();
+    const testUserExist = await User.findOne({ phoneNumber: userOBJ.phoneNumber });
+    if (testUserExist !== null) {
+      this.response = `END this number is already used for another account`;
+    } else {
+      const user = User(userOBJ);
+      await user.save();
+      this.response = `END New user account saved succefully`;
+    }
   }
 
   async run() {
@@ -71,25 +77,20 @@ class KioUserService {
       } else if (this.text.length == 11) {
         let userFile = fs.readFileSync("userTempo.json");
         let _userTempo = JSON.parse(userFile);
-        if (
-          this.text == `2*${_userTempo.password}*${_userTempo.password}`
-        ) {
+        if (this.text == `2*${_userTempo.password}*${_userTempo.password}`) {
           let userThirdPart = await checkIfUserExist(
             thirdPartsUrl + "/user/" + this.phoneNumber
           );
           if (userThirdPart[0]) {
-            let  username =  await checkIfUserExist(thirdPartsUrl + "/user/" + this.phoneNumber)[1].data.datas.user_name;
-            this.response = `END New user account saved succefully`
-            await this.save(user);
-            console.log(username);
-
+            console.log("thirdPart exists");
+            let username = userThirdPart[1].data.datas.user_name;
             const user = { ..._userTempo, balance: 0, username: username };
-            // console.log("new user created succefully");
+            await this.save(user);
           } else this.response = `END your phone number is not recognized`;
         }
       }
     }
-    if (await this.whenAuthentified()) {
+    if (this.text.startsWith("1*") && (await this.whenAuthentified())) {
       this.response = `END your phoneNumber is ${this.phoneNumber}
         your username is ${this.username}
         your balance is ${this.balance}`;
