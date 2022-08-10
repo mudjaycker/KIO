@@ -42,7 +42,7 @@ class KioUserService {
 
   newUserPassword() {
     this.response = `CON Welcome to kio user creation ...
-        type the password of your new account`;
+        type the password of your new account (it must contain only 4 characters)`;
   }
 
   askForUserPassword() {
